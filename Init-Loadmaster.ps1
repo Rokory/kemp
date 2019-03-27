@@ -129,6 +129,14 @@ $LMParameters = @(
         Param = 'Dfltgw'
         Value = '10.0.1.254'
     }
+    @{
+        Param = 'searchlist'
+        Value = 'kemp.lab'
+    }
+    @{
+        Param = 'DNSNamesEnable'
+        Value = 0
+    }
 )
 
 # Iterate through all LoadMasters
@@ -164,7 +172,8 @@ $loadBalancers | ForEach-Object {
             Write-Debug "MagicString: $($eula.Data.Eula.MagicString)"
 
             Write-Verbose "Confirm first EULA for LoadMaster $($PSItem.LoadBalancer) and get second EULA"
-            $eula2 = Confirm-LicenseEULA @connection `                -Magic $eula.Data.Eula.MagicString
+            $eula2 = Confirm-LicenseEULA @connection `
+                -Magic $eula.Data.Eula.MagicString
 
             Write-Verbose "Second EULA for LoadMaster$($PSItem.LoadBalancer)"
             Write-Verbose $eula2.Data.Eula2.Eula2
@@ -172,13 +181,15 @@ $loadBalancers | ForEach-Object {
 
             Write-Verbose "Confirm second EULA for LoadMaster $($PSItem.LoadBalancer)"
             Confirm-LicenseEULA2 @connection `
-                -Magic $eula2.Data.Eula2.MagicString `                -Accept yes
+                -Magic $eula2.Data.Eula2.MagicString `
+                -Accept yes
         #endregion
 
         #region Get online license
             Write-Verbose "Get online license for LoadMaster $($PSItem.LoadBalancer)"
             Request-LicenseOnline @connection `
-                -KempId $kempID `                -Password $kempPassword
+                -KempId $kempID `
+                -Password $kempPassword
         #endregion
 
         #region Set initial password
@@ -192,7 +203,8 @@ $loadBalancers | ForEach-Object {
     }
 
     # Set hostname
-    Set-LmParameter -Param hostname -Value $PSItem.hostname `        -Credential $credential @connection 
+    Set-LmParameter -Param hostname -Value $PSItem.hostname `
+        -Credential $credential @connection 
 
     #region Set other common parameters
         $LMParameters | ForEach-Object {
